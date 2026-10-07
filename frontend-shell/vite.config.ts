@@ -16,6 +16,12 @@ export default defineConfig({
           entry: "http://localhost:5174/remoteEntry.js",
           shareScope: "default",
         },
+        products: {
+          type: "module",
+          name: "products",
+          entry: "http://localhost:5175/remoteEntry.js",
+          shareScope: "default",
+        },
       },
       shared: ["react", "react-dom"],
     }),
