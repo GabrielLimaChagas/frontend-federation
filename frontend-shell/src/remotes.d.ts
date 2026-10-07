@@ -5,6 +5,13 @@ declare module 'customers/CustomerList' {
   export default CustomerList;
 }
 
+declare module 'customers/CustomerForm' {
+  import type { ComponentType } from 'react';
+
+  const CustomerForm: ComponentType;
+  export default CustomerForm;
+}
+
 declare module 'products/ProductList' {
   import type { ComponentType } from 'react';
 

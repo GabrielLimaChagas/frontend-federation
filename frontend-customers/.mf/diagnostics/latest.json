@@ -1,10 +1,10 @@
 {
   "latestErrorEvent": {
     "code": "TYPE-001",
-    "message": "Failed to generate type declaration. Execute the below cmd to reproduce and fix the error. #TYPE-001\nargs: {\"cmd\":\"C:\\\\nvm4w\\\\nodejs\\\\node.exe \\\"C:\\\\\\\\Users\\\\\\\\Gabriel Faculdade\\\\\\\\PUCPR\\\\\\\\Projects\\\\\\\\frontend-federation\\\\\\\\frontend-customers\\\\\\\\node_modules\\\\\\\\typescript\\\\\\\\bin\\\\\\\\tsc\\\" --project \\\"C:\\\\\\\\Users\\\\\\\\Gabriel Faculdade\\\\\\\\PUCPR\\\\\\\\Projects\\\\\\\\frontend-federation\\\\\\\\frontend-customers\\\\\\\\node_modules\\\\\\\\.federation\\\\\\\\tsconfig.3be13b4ef5bbe7570407160ca1df9fea.json\\\"\"}\nView the docs to see how to solve: https://module-federation.io/guide/troubleshooting/type#type-001",
+    "message": "Failed to generate type declaration. Execute the below cmd to reproduce and fix the error. #TYPE-001\nargs: {\"cmd\":\"C:\\\\nvm4w\\\\nodejs\\\\node.exe \\\"C:\\\\\\\\Users\\\\\\\\Gabriel Faculdade\\\\\\\\PUCPR\\\\\\\\Projects\\\\\\\\frontend-federation\\\\\\\\frontend-customers\\\\\\\\node_modules\\\\\\\\typescript\\\\\\\\bin\\\\\\\\tsc\\\" --project \\\"C:\\\\\\\\Users\\\\\\\\Gabriel Faculdade\\\\\\\\PUCPR\\\\\\\\Projects\\\\\\\\frontend-federation\\\\\\\\frontend-customers\\\\\\\\node_modules\\\\\\\\.federation\\\\\\\\tsconfig.3426f9072ce987ca6a8ea25eec261db2.json\\\"\"}\nView the docs to see how to solve: https://module-federation.io/guide/troubleshooting/type#type-001",
     "args": {
-      "cmd": "C:\\nvm4w\\nodejs\\node.exe \"C:\\\\Users\\\\Gabriel Faculdade\\\\PUCPR\\\\Projects\\\\frontend-federation\\\\frontend-customers\\\\node_modules\\\\typescript\\\\bin\\\\tsc\" --project \"C:\\\\Users\\\\Gabriel Faculdade\\\\PUCPR\\\\Projects\\\\frontend-federation\\\\frontend-customers\\\\node_modules\\\\.federation\\\\tsconfig.3be13b4ef5bbe7570407160ca1df9fea.json\""
+      "cmd": "C:\\nvm4w\\nodejs\\node.exe \"C:\\\\Users\\\\Gabriel Faculdade\\\\PUCPR\\\\Projects\\\\frontend-federation\\\\frontend-customers\\\\node_modules\\\\typescript\\\\bin\\\\tsc\" --project \"C:\\\\Users\\\\Gabriel Faculdade\\\\PUCPR\\\\Projects\\\\frontend-federation\\\\frontend-customers\\\\node_modules\\\\.federation\\\\tsconfig.3426f9072ce987ca6a8ea25eec261db2.json\""
     },
-    "timestamp": 1791333295029
+    "timestamp": 1791336352882
   }
 }

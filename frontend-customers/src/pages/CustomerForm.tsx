@@ -3,22 +3,23 @@ import Header from "../components/base/Header";
 import Button from "../components/core/Button";
 import Col from "../components/core/Col";
 import Form from "../components/core/Form";
+import Input from "../components/core/Input";
 import Row from "../components/core/Row";
 import TextAreaInput from "../components/core/TextAreaInput";
-import Input from "../components/core/Input";
 import "../index.css";
+import type { Customer } from "./CustomerList";
 
-type CustomerFormFields = {
-  name: string;
-  price: string;
-  description: string;
-};
+interface CustomerFormProps {
+  initialData?: Customer;
+  onFinish: (customer: Customer) => void;
+}
 
-const CustomerForm = () => {
-  const methods = useForm<CustomerFormFields>();
+const CustomerForm = ({ initialData, onFinish }: CustomerFormProps) => {
+  const methods = useForm<Customer>();
 
-  const onSubmit: SubmitHandler<CustomerFormFields> = (data) =>
-    console.log(data);
+  if (initialData) methods.setValues(initialData);
+
+  const onSubmit: SubmitHandler<Customer> = (data) => onFinish(data);
   return (
     <Col className="w-full">
       <Header title="Customers" />
@@ -32,10 +33,7 @@ const CustomerForm = () => {
             <Row className="gap-16">
               <Col className="w-full">
                 <Input name="name" label="Nome" />
-                <Input name="birth" label="Nascimento" type="date" />
-                <Input name="phone" label="Telefone" type="tel" />
-                <Input name="email" label="E-mail" type="email" />
-                <TextAreaInput name="notes" label="Observações" rows={7} />
+                <Input name="pipelinesCount" label="Compras em Andamento" />
                 <Button
                   type="submit"
                   label="Salvar Alterações"

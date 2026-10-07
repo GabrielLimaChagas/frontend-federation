@@ -10,7 +10,7 @@ export default defineConfig({
     federation({
       name: "customers",
       filename: "remoteEntry.js",
-      exposes: { "./CustomerList": "./src/pages/CustomerList.tsx" },
+      exposes: { "./CustomerList": "./src/pages/CustomerList.tsx", "./CustomerForm": "./src/pages/CustomerForm.tsx" },
       shared: ["react", "react-dom"],
     }),
   ],

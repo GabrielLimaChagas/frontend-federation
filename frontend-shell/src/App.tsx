@@ -17,14 +17,6 @@ function App() {
             path={NAVIGATION_ROUTES.CUSTOMERS}
             element={<CustomerList />}
           />
-          {/* <Route
-          path={NAVIGATION_ROUTES.NEW_CUSTOMER}
-          element={<CustomerForm />}
-        /> */}
-          {/* <Route
-          path={NAVIGATION_ROUTES.EDIT_CUSTOMER}
-          element={<CustomerForm />}
-        /> */}
         </Route>
       </Routes>
     </Suspense>
