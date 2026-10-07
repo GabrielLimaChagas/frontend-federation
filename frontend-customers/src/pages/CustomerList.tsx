@@ -6,18 +6,29 @@ import Col from "../components/core/Col";
 import IconButton from "../components/core/IconButton";
 import Row from "../components/core/Row";
 import { NAVIGATION_ROUTES } from "../consts/navigationRoutes";
-import '../index.css';
+import "../index.css";
+import { useState } from "react";
 
-const MOCK_DATA = [
-  { id: "1", name: "Maria", pipelinesCount: 2 },
-  { id: "2", name: "Antônio", pipelinesCount: 27 },
-];
+type Customer = {
+  id: string;
+  name: string;
+  pipelinesCount: number;
+};
 
 const CustomerList = () => {
+  const [data, setData] = useState([
+    { id: "1", name: "Maria", pipelinesCount: 2 },
+    { id: "2", name: "Antônio", pipelinesCount: 27 },
+  ] as Customer[]);
+
+  const removeCustomer = (id: string) => {
+    setData(data.filter((customer) => customer.id !== id));
+  };
+
   return (
     <Col className="w-full">
       <Header
-        title="Produtos"
+        title="Clientes"
         rightAttachment={
           <Button
             label="Novo Cliente"
@@ -29,7 +40,7 @@ const CustomerList = () => {
         }
       />
       <Col className="p-2">
-        <Table
+        <Table<Customer>
           className="shadow"
           columns={[
             { header: "ID", accessor: "id" },
@@ -53,15 +64,13 @@ const CustomerList = () => {
                   />
                   <IconButton
                     icon={<TrashIcon className="w-5 h-5" />}
-                    onClick={() =>
-                      null // integrar
-                    }
+                    onClick={() => removeCustomer(item.id)}
                   />
                 </Row>
               ),
             },
           ]}
-          data={MOCK_DATA}
+          data={data}
           keyExtractor={(item: { id: string }) => item.id}
         />
       </Col>
