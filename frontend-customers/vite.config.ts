@@ -1,13 +1,16 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from '@tailwindcss/vite'
 import { federation } from "@module-federation/vite";
+
 export default defineConfig({
   plugins: [
     react(),
+    tailwindcss(),
     federation({
       name: "customers",
       filename: "remoteEntry.js",
-      exposes: { "./src/components/pages/CustomerList.tsx": "./src/components/pages/CustomerForm.tsx" },
+      exposes: { "./CustomerList": "./src/pages/CustomerList.tsx" },
       shared: ["react", "react-dom"],
     }),
   ],

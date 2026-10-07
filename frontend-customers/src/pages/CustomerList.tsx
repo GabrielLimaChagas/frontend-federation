@@ -6,6 +6,7 @@ import Col from "../components/core/Col";
 import IconButton from "../components/core/IconButton";
 import Row from "../components/core/Row";
 import { NAVIGATION_ROUTES } from "../consts/navigationRoutes";
+import '../index.css';
 
 const MOCK_DATA = [
   { id: "1", name: "Maria", pipelinesCount: 2 },

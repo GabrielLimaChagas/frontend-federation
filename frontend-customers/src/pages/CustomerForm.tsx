@@ -1,5 +1,4 @@
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { useParams } from "react-router";
 import Header from "../components/base/Header";
 import Button from "../components/core/Button";
 import Col from "../components/core/Col";
@@ -7,6 +6,7 @@ import Form from "../components/core/Form";
 import Row from "../components/core/Row";
 import TextAreaInput from "../components/core/TextAreaInput";
 import Input from "../components/core/Input";
+import "../index.css";
 
 type CustomerFormFields = {
   name: string;
@@ -16,8 +16,6 @@ type CustomerFormFields = {
 
 const CustomerForm = () => {
   const methods = useForm<CustomerFormFields>();
-
-  const { id } = useParams();
 
   const onSubmit: SubmitHandler<CustomerFormFields> = (data) =>
     console.log(data);
