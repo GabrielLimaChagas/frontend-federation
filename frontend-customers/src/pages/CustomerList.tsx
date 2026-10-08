@@ -5,7 +5,6 @@ import Button from "../components/core/Button";
 import Col from "../components/core/Col";
 import IconButton from "../components/core/IconButton";
 import Row from "../components/core/Row";
-import { NAVIGATION_ROUTES } from "../consts/navigationRoutes";
 import "../index.css";
 import { useState } from "react";
 import CustomerForm from "./CustomerForm";
@@ -75,7 +74,16 @@ const CustomerList = () => {
       {!!selectedCustomer && (
         <CustomerForm
           onFinish={(customer) => {
-            setData([...(selectedCustomer !== "new" ? data.filter((customer) => customer.id !== selectedCustomer) : data), { ...customer, id: data.length.toString() }]);
+            if (selectedCustomer === "new") {
+              setData([...data, { ...customer, id: data.length.toString() }]);
+            } else {
+              const editingIndex = data.findIndex(
+                (customer) => customer.id === selectedCustomer,
+              );
+              const newData = [...data];
+              newData[editingIndex] = { ...newData[editingIndex], ...customer };
+              setData(newData);
+            }
             setSelectedCustomer(null);
           }}
           initialData={data.find(
