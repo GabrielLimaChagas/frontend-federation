@@ -1,4 +1,5 @@
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/20/solid";
+import { useState } from "react";
 import Header from "../components/base/Header";
 import Table from "../components/base/Table";
 import Button from "../components/core/Button";
@@ -6,7 +7,6 @@ import Col from "../components/core/Col";
 import IconButton from "../components/core/IconButton";
 import Row from "../components/core/Row";
 import "../index.css";
-import { useState } from "react";
 import CustomerForm from "./CustomerForm";
 
 export type Customer = {
@@ -75,7 +75,10 @@ const CustomerList = () => {
         <CustomerForm
           onFinish={(customer) => {
             if (selectedCustomer === "new") {
-              setData([...data, { ...customer, id: data.length.toString() }]);
+              setData([
+                ...data,
+                { ...customer, id: new Date().getTime().toString() },
+              ]);
             } else {
               const editingIndex = data.findIndex(
                 (customer) => customer.id === selectedCustomer,

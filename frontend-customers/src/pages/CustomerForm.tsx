@@ -5,7 +5,6 @@ import Col from "../components/core/Col";
 import Form from "../components/core/Form";
 import Input from "../components/core/Input";
 import Row from "../components/core/Row";
-import TextAreaInput from "../components/core/TextAreaInput";
 import "../index.css";
 import type { Customer } from "./CustomerList";
 
