@@ -79,7 +79,10 @@ const ProductList = () => {
         <ProductForm
           onFinish={(product) => {
             if (selectedProduct === "new") {
-              setData([...data, { ...product, id: data.length.toString() }]);
+              setData([
+                ...data,
+                { ...product, id: new Date().getTime().toString() },
+              ]);
             } else {
               const editingIndex = data.findIndex(
                 (product) => product.id === selectedProduct,
