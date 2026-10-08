@@ -1,22 +1,24 @@
 import { type SubmitHandler, useForm } from "react-hook-form";
+import Header from "../components/base/Header";
+import Button from "../components/core/Button";
 import Col from "../components/core/Col";
 import Form from "../components/core/Form";
 import Input from "../components/core/Input";
-import Button from "../components/core/Button";
 import Row from "../components/core/Row";
-import Header from "../components/base/Header";
+import type { Product } from "./ProductList";
 
-type ProductFormFields = {
-  name: string;
-  price: string;
-  description: string;
-};
+interface ProductFormProps {
+  initialData?: Product;
+  onFinish: (product: Product) => void;
+}
 
-const ProductForm = () => {
-  const methods = useForm<ProductFormFields>();
+const ProductForm = ({ initialData, onFinish }: ProductFormProps) => {
+  const methods = useForm<Product>();
 
-  const onSubmit: SubmitHandler<ProductFormFields> = (data) =>
-    console.log(data);
+  if (initialData) methods.setValues(initialData);
+
+  const onSubmit: SubmitHandler<Product> = (data) => onFinish(data);
+
   return (
     <Col className="w-full">
       <Header
@@ -31,7 +33,7 @@ const ProductForm = () => {
           >
             <Input name="name" label="Nome" />
             <Input name="price" label="Preço" />
-            <Input name="description" label="Descrição" />
+            {/* <Input name="description" label="Descrição" /> */}
             <Row>
               <Button
                 type="submit"
