@@ -25,7 +25,7 @@ export default defineConfig({
           shareScope: "default",
         },
       },
-      shared: ["react", "react-dom", "react-router-dom"],
+      shared: ["react", "react-dom"],
     }),
   ],
   server: { port: 5173 },
