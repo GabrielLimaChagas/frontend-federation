@@ -13,14 +13,14 @@ export default defineConfig({
         customers: {
           type: "module",
           name: "customers",
-          entry: "/frontend-customers/assets/remoteEntry.js",
+          entry: "/frontend-customers/remoteEntry.js",
           entryGlobalName: "customers",
           shareScope: "default",
         },
         products: {
           type: "module",
           name: "products",
-          entry: "/frontend-products/assets/remoteEntry.js",
+          entry: "/frontend-products/remoteEntry.js",
           entryGlobalName: "products",
           shareScope: "default",
         },

@@ -32,18 +32,17 @@ jobs:
           wait $PID_CUSTOMERS || { echo "frontend-customers falhou"; exit 1; }
           wait $PID_PRODUCTS  || { echo "frontend-products falhou";  exit 1; }
 
-      # 2. Copiar assets dos Remotes para frontend-shell/public
-      - name: Copy Remotes assets into shell public
+      # 2. Copiar todo o bundle compilado dos remotes para frontend-shell/public
+      - name: Copy Remotes dist into shell public
         run: |
-          mkdir -p frontend-shell/public/frontend-customers/assets
-          find frontend-customers/dist/assets -maxdepth 1 -type f \
-            ! -name '__federation_shared_*' \
-            -exec cp {} frontend-shell/public/frontend-customers/assets/ \;
+          mkdir -p frontend-shell/public/frontend-customers
+          cp -r frontend-customers/dist/* frontend-shell/public/frontend-customers/
 
-          mkdir -p frontend-shell/public/frontend-products/assets
-          find frontend-products/dist/assets -maxdepth 1 -type f \
-            ! -name '__federation_shared_*' \
-            -exec cp {} frontend-shell/public/frontend-products/assets/ \;
+          mkdir -p frontend-shell/public/frontend-products
+          cp -r frontend-products/dist/* frontend-shell/public/frontend-products/
+
+          echo "=== Estrutura final dos ficheiros em shell/public ==="
+          find frontend-shell/public -type f | sort
 
       # 3. Build do Shell (o Vite automaticamente incluirá a pasta public/ no dist)
       - name: Build frontend-shell
