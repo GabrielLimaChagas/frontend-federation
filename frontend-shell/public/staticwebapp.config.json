@@ -1,16 +1,12 @@
 {
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/assets/*", "/*.{js,mjs,wasm,css,json,png,svg,jpg}"]
+    "exclude": ["/assets/*", "/frontend-customers/*", "/frontend-products/*", "/*.{js,mjs,wasm,css,json,png,svg,jpg}"]
   },
   "mimeTypes": {
     ".js": "text/javascript",
     ".mjs": "text/javascript",
     ".wasm": "application/wasm",
     ".json": "application/json"
-  },
-  "globalHeaders": {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, OPTIONS"
   }
 }

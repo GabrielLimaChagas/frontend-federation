@@ -3,11 +3,11 @@ name: Azure Static Web Apps CI/CD
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - master
+      - main
 
 jobs:
   build_and_deploy_job:
@@ -16,31 +16,49 @@ jobs:
     name: Build and Deploy Job
     steps:
       - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          submodules: true
-          lfs: false
-      - name: Build And Deploy
+          node-version: '20'
+
+      # 1. Build dos Remotes em Paralelo
+      - name: Build remotes (frontend-customers e frontend-products)
+        run: |
+          (npm ci --prefix frontend-customers && npm run build --prefix frontend-customers) &
+          PID_CUSTOMERS=$!
+          (npm ci --prefix frontend-products && npm run build --prefix frontend-products) &
+          PID_PRODUCTS=$!
+          wait $PID_CUSTOMERS || { echo "frontend-customers falhou"; exit 1; }
+          wait $PID_PRODUCTS  || { echo "frontend-products falhou";  exit 1; }
+
+      # 2. Copiar assets dos Remotes para frontend-shell/public
+      - name: Copy Remotes assets into shell public
+        run: |
+          mkdir -p frontend-shell/public/frontend-customers/assets
+          find frontend-customers/dist/assets -maxdepth 1 -type f \
+            ! -name '__federation_shared_*' \
+            -exec cp {} frontend-shell/public/frontend-customers/assets/ \;
+
+          mkdir -p frontend-shell/public/frontend-products/assets
+          find frontend-products/dist/assets -maxdepth 1 -type f \
+            ! -name '__federation_shared_*' \
+            -exec cp {} frontend-shell/public/frontend-products/assets/ \;
+
+      # 3. Build do Shell (o Vite automaticamente incluirá a pasta public/ no dist)
+      - name: Build frontend-shell
+        run: |
+          npm ci --prefix frontend-shell
+          npm run build --prefix frontend-shell
+
+      # 4. Deploy da pasta pronta (frontend-shell/dist) para o Azure
+      - name: Deploy to Azure Static Web Apps
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ZEALOUS_PEBBLE_0418EED0F }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "./frontend-shell" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "dist" # Built app content directory - optional
-          ###### End of Repository/Build Configurations ######
-
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-    steps:
-      - name: Close Pull Request
-        id: closepullrequest
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ZEALOUS_PEBBLE_0418EED0F }}
-          action: "close"
+          app_location: "frontend-shell/dist"
+          output_location: ""
+          skip_app_build: true

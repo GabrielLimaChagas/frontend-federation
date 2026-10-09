@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import tailwindcss from '@tailwindcss/vite'
+import tailwindcss from "@tailwindcss/vite";
 import { federation } from "@module-federation/vite";
 
 export default defineConfig({
@@ -13,17 +13,19 @@ export default defineConfig({
         customers: {
           type: "module",
           name: "customers",
-          entry: "http://localhost:5174/remoteEntry.js",
+          entry: "/frontend-customers/assets/remoteEntry.js",
+          entryGlobalName: "customers",
           shareScope: "default",
         },
         products: {
           type: "module",
           name: "products",
-          entry: "http://localhost:5175/remoteEntry.js",
+          entry: "/frontend-products/assets/remoteEntry.js",
+          entryGlobalName: "products",
           shareScope: "default",
         },
       },
-      shared: ["react", "react-dom"],
+      shared: ["react", "react-dom", "react-router-dom"],
     }),
   ],
   server: { port: 5173 },
