@@ -1,11 +1,4 @@
-import {
-  ArchiveBoxIcon,
-  BellIcon,
-  CurrencyDollarIcon,
-  DocumentTextIcon,
-  Squares2X2Icon,
-  UsersIcon,
-} from "@heroicons/react/20/solid";
+import { ArchiveBoxIcon, UsersIcon } from "@heroicons/react/20/solid";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import Logo from "../../assets/crmaster.svg";
 import Col from "../core/Col";
