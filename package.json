@@ -1,0 +1,12 @@
+{
+  "name": "frontend-federation",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Arquitetura Frontend Federation (Module Federation)",
+  "scripts": {
+    "test:arch": "depcruise frontend-shell/src/main.tsx frontend-customers/src/main.tsx frontend-products/src/main.tsx frontend-customers/src/pages/CustomerList.tsx frontend-products/src/pages/ProductList.tsx --config .dependency-cruiser.js"
+  },
+  "devDependencies": {
+    "dependency-cruiser": "^16.10.0"
+  }
+}

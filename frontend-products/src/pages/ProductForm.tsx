@@ -6,7 +6,7 @@ import Col from "../components/core/Col";
 import Form from "../components/core/Form";
 import Input from "../components/core/Input";
 import Row from "../components/core/Row";
-import type { Product } from "./ProductList";
+import type { Product } from "../services/productService";
 
 interface ProductFormProps {
   initialData?: Product;

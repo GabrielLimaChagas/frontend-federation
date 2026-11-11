@@ -7,7 +7,7 @@ import Form from "../components/core/Form";
 import Input from "../components/core/Input";
 import Row from "../components/core/Row";
 import "../index.css";
-import type { Customer } from "./CustomerList";
+import type { Customer } from "../services/customerService";
 
 interface CustomerFormProps {
   initialData?: Customer;
