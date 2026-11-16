@@ -1,4 +1,4 @@
-import { API_URL } from "./api";
+import { httpClient } from "./api";
 
 export interface Product {
   id: string;
@@ -6,49 +6,40 @@ export interface Product {
   price: number;
 }
 
+export interface AuditLog {
+  id: string;
+  eventType: string;
+  payload: string;
+  createdAt: string;
+}
+
 export const productService = {
   async getAll(): Promise<Product[]> {
-    const res = await fetch(`${API_URL}/products`);
-    if (!res.ok) {
-      throw new Error(`Erro ao buscar produtos: ${res.statusText}`);
-    }
-    return res.json();
+    return httpClient<Product[]>("/products");
   },
 
   async create(product: Omit<Product, "id">): Promise<Product> {
-    const res = await fetch(`${API_URL}/products`, {
+    return httpClient<Product>("/products", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(product),
     });
-    if (!res.ok) {
-      throw new Error(`Erro ao criar produto: ${res.statusText}`);
-    }
-    return res.json();
   },
 
   async update(id: string, product: Partial<Product>): Promise<Product> {
-    const res = await fetch(`${API_URL}/products/${id}`, {
+    return httpClient<Product>(`/products/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(product),
     });
-    if (!res.ok) {
-      throw new Error(`Erro ao atualizar produto: ${res.statusText}`);
-    }
-    return res.json();
   },
 
   async delete(id: string): Promise<void> {
-    const res = await fetch(`${API_URL}/products/${id}`, {
+    return httpClient<void>(`/products/${id}`, {
       method: "DELETE",
     });
-    if (!res.ok) {
-      throw new Error(`Erro ao remover produto: ${res.statusText}`);
-    }
+  },
+
+  // Consulta de eventos de mensageria assíncrona processados pelo consumidor
+  async getAuditLogs(): Promise<AuditLog[]> {
+    return httpClient<AuditLog[]>("/products/audit-logs");
   },
 };

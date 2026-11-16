@@ -1,4 +1,4 @@
-import { ArchiveBoxIcon, UsersIcon } from "@heroicons/react/20/solid";
+import { ArchiveBoxIcon, UsersIcon, ChartBarSquareIcon } from "@heroicons/react/20/solid";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import Logo from "../../assets/crmaster.svg";
 import Col from "../core/Col";
@@ -30,6 +30,7 @@ const SidebarItemMenu: React.FC<SidebarItemMenuProps> = ({
 };
 
 const MENU_ITEMS = [
+  { path: NAVIGATION_ROUTES.DASHBOARD, icon: ChartBarSquareIcon, label: "Dashboard (BFF)" },
   { path: NAVIGATION_ROUTES.CUSTOMERS, icon: UsersIcon, label: "Clientes" },
   { path: NAVIGATION_ROUTES.PRODUCTS, icon: ArchiveBoxIcon, label: "Produtos" },
 ];
@@ -37,9 +38,17 @@ const MENU_ITEMS = [
 const Sidebar: React.FC = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+
+  const isItemActive = (path: string) => {
+    if (path === NAVIGATION_ROUTES.DASHBOARD) {
+      return pathname === "/" || pathname === `/${NAVIGATION_ROUTES.DASHBOARD}`;
+    }
+    return pathname.includes(path);
+  };
+
   return (
     <Col className="w-50 bg-white px-2 border-r border-neutral-200">
-      <Col className="p-4">
+      <Col className="p-4 cursor-pointer" onClick={() => navigate("/")}>
         <img src={Logo} alt="logo" />
       </Col>
       <Col className="h-full">
@@ -47,8 +56,8 @@ const Sidebar: React.FC = () => {
           <SidebarItemMenu
             key={props.path}
             {...props}
-            active={pathname.includes(props.path)}
-            onClick={() => navigate(props.path)}
+            active={isItemActive(props.path)}
+            onClick={() => navigate(props.path === NAVIGATION_ROUTES.DASHBOARD ? "/" : props.path)}
           />
         ))}
       </Col>

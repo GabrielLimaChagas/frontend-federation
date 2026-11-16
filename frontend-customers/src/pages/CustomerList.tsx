@@ -17,6 +17,7 @@ const CustomerList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
+  const [asyncFeedback, setAsyncFeedback] = useState<string | null>(null);
 
   const fetchCustomers = async () => {
     try {
@@ -50,6 +51,8 @@ const CustomerList = () => {
       if (selectedCustomer === "new") {
         const created = await customerService.create(formCustomer);
         setData((prev) => [...prev, created]);
+        setAsyncFeedback(`Cliente "${created.name}" cadastrado! Evento CustomerCreatedEvent publicado no Azure Service Bus com sucesso.`);
+        setTimeout(() => setAsyncFeedback(null), 6000);
       } else if (selectedCustomer) {
         const updated = await customerService.update(selectedCustomer, formCustomer);
         setData((prev) =>
@@ -76,6 +79,15 @@ const CustomerList = () => {
           }
         />
         <Col className="p-2">
+          {asyncFeedback && (
+            <div className="bg-emerald-100 border border-emerald-400 text-emerald-800 px-4 py-2.5 rounded mb-4 flex items-center justify-between shadow-sm">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-sm">Mensageria Assíncrona:</span>
+                <span className="text-sm">{asyncFeedback}</span>
+              </div>
+              <span className="text-xs font-mono bg-emerald-200 px-2 py-0.5 rounded">Azure Service Bus</span>
+            </div>
+          )}
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
               {error}
