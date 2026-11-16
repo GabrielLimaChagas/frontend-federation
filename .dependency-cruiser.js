@@ -29,10 +29,23 @@ module.exports = {
       comment:
         'Proibir importações diretas relativas entre diferentes micro-frontends sem passar pelo Module Federation.',
       from: {
-        path: '^frontend-shell/src',
+        path: '^(frontend-shell|frontend-customers|frontend-products)/src',
       },
       to: {
-        path: '^(frontend-customers|frontend-products)/src',
+        path: '^(frontend-shell|frontend-customers|frontend-products)/src',
+        pathNot: '^$1',
+      },
+    },
+    {
+      name: 'mfe-only-consume-services-pointing-to-gateway',
+      severity: 'error',
+      comment:
+        'Pages e Components devem consumir dados apenas via camada de serviços (src/services).',
+      from: {
+        path: '^frontend-[^/]+/src/(pages|components)',
+      },
+      to: {
+        path: '^frontend-[^/]+/src/(domain|infrastructure|backend)',
       },
     },
     {
