@@ -9,7 +9,7 @@ import {
   type HealthStatus,
   type AuditLogItem,
 } from "../services/bffService";
-import { authStorage } from "../services/api";
+import { useAuth } from "../services/AuthContext";
 import {
   UsersIcon,
   ArchiveBoxIcon,
@@ -18,16 +18,22 @@ import {
   ExclamationTriangleIcon,
   ArrowPathIcon,
   KeyIcon,
+  CurrencyDollarIcon,
 } from "@heroicons/react/20/solid";
 
+const formatCentAsReal = (cents = 0) =>
+  (cents / 100).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+
 const Dashboard: React.FC = () => {
+  const { isAuthenticated, token, loginDemo } = useAuth();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [health, setHealth] = useState<HealthStatus | null>(null);
   const [auditLogs, setAuditLogs] = useState<AuditLogItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [tokenInfo, setTokenInfo] = useState<string | null>(authStorage.getToken());
-  const [authStatus, setAuthStatus] = useState<string>("Verificando...");
 
   const loadDashboardData = async () => {
     try {
@@ -49,10 +55,6 @@ const Dashboard: React.FC = () => {
       // Consulta aos logs do consumidor assíncrono (Azure Service Bus)
       const logs = await bffService.getAuditLogs();
       setAuditLogs(logs);
-
-      // Validação de autenticação
-      const isValid = await bffService.verifyAuth();
-      setAuthStatus(isValid ? "Autenticado (JWT Válido)" : "Sem Token / Não Autenticado");
     } catch (err: any) {
       setError(err.message || "Erro ao carregar dados do BFF");
     } finally {
@@ -60,30 +62,10 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const handleLogin = async () => {
-    try {
-      setLoading(true);
-      const token = await bffService.login("admin", "admin123");
-      setTokenInfo(token);
-      await loadDashboardData();
-    } catch (err: any) {
-      alert("Falha no login: " + err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLogout = () => {
-    authStorage.removeToken();
-    setTokenInfo(null);
-    setAuthStatus("Sem Token");
-  };
-
   useEffect(() => {
-    // Se não tiver token gravado, faz login demonstrativo automático para inicializar o Bearer token
-    if (!authStorage.getToken()) {
-      bffService.login("admin", "admin123").then((token) => {
-        setTokenInfo(token);
+    // Se ainda não tiver token, tenta auto-gerar sessão demo inicial para navegação suave
+    if (!token) {
+      loginDemo("admin").then(() => {
         loadDashboardData();
       }).catch(() => {
         loadDashboardData();
@@ -91,25 +73,18 @@ const Dashboard: React.FC = () => {
     } else {
       loadDashboardData();
     }
-  }, []);
+  }, [token]);
 
   return (
     <Col className="w-full">
       <Header
         title="Dashboard Executivo & BFF"
         rightAttachment={
-          <Row className="items-center gap-2">
-            <Button
-              label="Atualizar BFF"
-              variant="secondary"
-              onClick={loadDashboardData}
-            />
-            {tokenInfo ? (
-              <Button label="Logout" variant="secondary" onClick={handleLogout} />
-            ) : (
-              <Button label="Login JWT" variant="primary" onClick={handleLogin} />
-            )}
-          </Row>
+          <Button
+            label="Atualizar Dados (BFF)"
+            variant="secondary"
+            onClick={loadDashboardData}
+          />
         }
       />
 
@@ -130,21 +105,22 @@ const Dashboard: React.FC = () => {
                   Segurança Centralizada no API Gateway
                 </h4>
                 <p className="text-sm text-neutral-500">
-                  {authStatus} • Injeção automática via cabeçalho{" "}
+                  Injeção automática do cabeçalho{" "}
                   <code className="bg-neutral-100 px-1 py-0.5 rounded text-xs text-neutral-700">
                     Authorization: Bearer &lt;token&gt;
-                  </code>
+                  </code>{" "}
+                  nas rotas protegidas pelo Gateway.
                 </p>
               </div>
             </Row>
             <span
               className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                tokenInfo
+                isAuthenticated
                   ? "bg-emerald-100 text-emerald-800"
                   : "bg-amber-100 text-amber-800"
               }`}
             >
-              {tokenInfo ? "Bearer Token Ativo" : "Não Autenticado"}
+              {isAuthenticated ? "Bearer Token Ativo" : "Não Autenticado"}
             </span>
           </Row>
         </div>
@@ -168,7 +144,7 @@ const Dashboard: React.FC = () => {
                 {loading ? "..." : summary?.customersCount ?? 0}
               </div>
               <p className="text-xs text-neutral-400 mt-1">
-                Persistido no MongoDB / Azure Cosmos DB
+                Banco NoSQL / Azure SQL Database (sqldb-customers)
               </p>
             </div>
 
@@ -184,7 +160,23 @@ const Dashboard: React.FC = () => {
                 {loading ? "..." : summary?.productsCount ?? 0}
               </div>
               <p className="text-xs text-neutral-400 mt-1">
-                Persistido no Azure SQL Database / SQL Server
+                Banco Relacional / Azure SQL Database (sqldb-products)
+              </p>
+            </div>
+
+            {/* Card Valor Total de Estoque / Catálogo */}
+            <div className="flex-1 bg-white p-5 rounded-xl shadow-sm border border-neutral-200">
+              <Row className="items-center justify-between mb-2">
+                <span className="text-neutral-500 font-medium text-sm">Valor Total do Catálogo</span>
+                <div className="p-2 bg-amber-50 text-amber-600 rounded-lg">
+                  <CurrencyDollarIcon className="w-5 h-5" />
+                </div>
+              </Row>
+              <div className="text-2xl font-bold text-neutral-800">
+                {loading ? "..." : formatCentAsReal(summary?.totalCatalogValueCents ?? 0)}
+              </div>
+              <p className="text-xs text-neutral-400 mt-1">
+                Soma consolidada pelo BFF em centavos de Real
               </p>
             </div>
 
@@ -196,15 +188,15 @@ const Dashboard: React.FC = () => {
                   <BoltIcon className="w-5 h-5" />
                 </div>
               </Row>
-              <div className="text-xl font-bold text-neutral-800 flex items-center gap-2">
+              <div className="text-lg font-bold text-neutral-800 flex items-center gap-2">
                 {health?.status === "UP" ? (
                   <>
-                    <CheckCircleIcon className="w-6 h-6 text-emerald-500" />
+                    <CheckCircleIcon className="w-5 h-5 text-emerald-500" />
                     <span>Totalmente Operacional</span>
                   </>
                 ) : (
                   <>
-                    <ExclamationTriangleIcon className="w-6 h-6 text-amber-500" />
+                    <ExclamationTriangleIcon className="w-5 h-5 text-amber-500" />
                     <span>{health?.status || "Verificando..."}</span>
                   </>
                 )}
@@ -225,7 +217,7 @@ const Dashboard: React.FC = () => {
                 Mensageria Assíncrona (Azure Service Bus)
               </h3>
               <p className="text-sm text-neutral-500">
-                Auditoria de eventos disparados pelo <strong>Customer Service</strong> e
+                Auditoria de eventos disparados pelo <strong>Customer Service</strong> (Cadastro ou Billing Request) e
                 consumidos/persistidos pelo <strong>Product Service</strong>.
               </p>
             </div>
@@ -239,9 +231,8 @@ const Dashboard: React.FC = () => {
 
           {auditLogs.length === 0 ? (
             <div className="p-6 text-center text-neutral-400 bg-neutral-50 rounded-lg border border-dashed border-neutral-300">
-              Nenhum evento registrado na fila ainda. Cadastre um novo cliente no menu{" "}
-              <strong>Clientes</strong> para disparar o evento assíncrono{" "}
-              <code>CustomerCreatedEvent</code>!
+              Nenhum evento registrado na fila ainda. Cadastre um novo cliente ou clique em{" "}
+              <strong>"Solicitar Faturamento"</strong> no menu <strong>Clientes</strong> para disparar eventos assíncronos!
             </div>
           ) : (
             <div className="overflow-x-auto">

@@ -1,4 +1,4 @@
-import { PencilSquareIcon, TrashIcon } from "@heroicons/react/20/solid";
+import { BanknotesIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { useEffect, useState } from "react";
 import Header from "../components/base/Header";
 import Table from "../components/base/Table";
@@ -18,6 +18,7 @@ const CustomerList = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
   const [asyncFeedback, setAsyncFeedback] = useState<string | null>(null);
+  const [billingLoadingId, setBillingLoadingId] = useState<string | null>(null);
 
   const fetchCustomers = async () => {
     try {
@@ -43,6 +44,23 @@ const CustomerList = () => {
       setData((prev) => prev.filter((customer) => customer.id !== id));
     } catch (err: any) {
       alert(err.message || "Erro ao excluir cliente");
+    }
+  };
+
+  const handleRequestBilling = async (customer: Customer) => {
+    try {
+      setBillingLoadingId(customer.id);
+      const res = await customerService.requestBilling(
+        customer.id,
+        25000,
+        `Faturamento gerado via CRM para ${customer.name}`
+      );
+      setAsyncFeedback(`Solicitação de faturamento enviada para o Azure Service Bus para "${customer.name}"! Status: ${res.status}`);
+      setTimeout(() => setAsyncFeedback(null), 8000);
+    } catch (err: any) {
+      alert(err.message || "Erro ao solicitar faturamento");
+    } finally {
+      setBillingLoadingId(null);
     }
   };
 
@@ -103,9 +121,19 @@ const CustomerList = () => {
                 { header: "Nome", accessor: "name" },
                 { header: "Compras em Andamento", accessor: "pipelinesCount" },
                 {
-                  header: "",
+                  header: "Ações",
                   accessor: (item) => (
-                    <Row className="text-neutral-600 justify-end gap-1">
+                    <Row className="text-neutral-600 justify-end items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleRequestBilling(item)}
+                        disabled={billingLoadingId === item.id}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors disabled:opacity-50"
+                        title="Disparar BillingRequestedEvent para o Azure Service Bus"
+                      >
+                        <BanknotesIcon className="w-4 h-4 text-emerald-600" />
+                        {billingLoadingId === item.id ? "Enviando..." : "Solicitar Faturamento"}
+                      </button>
                       <IconButton
                         icon={
                           <PencilSquareIcon

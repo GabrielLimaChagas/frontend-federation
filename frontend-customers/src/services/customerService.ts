@@ -30,4 +30,11 @@ export const customerService = {
       method: "DELETE",
     });
   },
+
+  async requestBilling(id: string, amountCents = 15000, description = "Faturamento solicitado pelo cliente"): Promise<{ status: string; message: string }> {
+    return httpClient<{ status: string; message: string }>(`/customers/${id}/billing-request`, {
+      method: "POST",
+      body: JSON.stringify({ amountCents, description }),
+    });
+  },
 };

@@ -3,6 +3,8 @@ import { httpClient, authStorage } from "./api";
 export interface DashboardSummary {
   customersCount: number;
   productsCount: number;
+  totalCatalogValueCents?: number;
+  totalPipelinesCount?: number;
 }
 
 export interface HealthStatus {
@@ -48,10 +50,10 @@ export const bffService = {
   },
 
   /**
-   * Endpoint centralizado de autenticação no API Gateway
+   * Endpoint centralizado de autenticação no API Gateway (POST /api/auth/token ou /api/auth/login)
    */
   async login(username = "admin", password = "password123"): Promise<string> {
-    const data = await httpClient<{ token: string }>("/auth/login", {
+    const data = await httpClient<{ token: string }>("/auth/token", {
       method: "POST",
       body: JSON.stringify({ username, password }),
     });
