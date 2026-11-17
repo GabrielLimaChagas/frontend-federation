@@ -1,23 +1,56 @@
-name: Azure Static Web Apps CI/CD
+name: Frontend MFE CI/CD (Azure Static Web Apps)
 
 on:
   push:
     branches:
+      - main
       - master
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
+      - main
       - master
 
 jobs:
-  build_and_deploy_job:
+  test_and_lint:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
+    name: Unit & Architecture Tests
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Root & MFE Dependencies
+        run: |
+          npm ci
+          npm ci --prefix frontend-customers
+          npm ci --prefix frontend-products
+          npm ci --prefix frontend-shell
+
+      - name: Run Architectural Fitness Functions (dependency-cruiser)
+        run: npm run test:arch
+
+      - name: Run Unit Tests (Vitest)
+        run: |
+          npm run test --prefix frontend-customers
+          npm run test --prefix frontend-products
+          npm run test --prefix frontend-shell
+
+  build_and_deploy_job:
+    needs: test_and_lint
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Build and Deploy to Azure
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -41,21 +74,18 @@ jobs:
           mkdir -p frontend-shell/public/frontend-products
           cp -r frontend-products/dist/* frontend-shell/public/frontend-products/
 
-          echo "=== Estrutura final dos ficheiros em shell/public ==="
-          find frontend-shell/public -type f | sort
-
-      # 3. Build do Shell (o Vite automaticamente incluirá a pasta public/ no dist)
+      # 3. Build do Shell
       - name: Build frontend-shell
         run: |
           npm ci --prefix frontend-shell
           npm run build --prefix frontend-shell
 
-      # 4. Deploy da pasta pronta (frontend-shell/dist) para o Azure
+      # 4. Deploy da pasta pronta (frontend-shell/dist) para o Azure Static Web Apps
       - name: Deploy to Azure Static Web Apps
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ZEALOUS_PEBBLE_0418EED0F }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "frontend-shell/dist"
