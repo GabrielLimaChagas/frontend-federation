@@ -1,8 +1,10 @@
 const DEFAULT_API_URL = "http://localhost:5000/api";
 
-export const API_URL = import.meta.env.VITE_API_GATEWAY_URL || DEFAULT_API_URL;
+const RAW_API_URL = import.meta.env.VITE_API_GATEWAY_URL || DEFAULT_API_URL;
+export const API_URL = RAW_API_URL.replace(/\/+$/, "");
 
 const TOKEN_KEY = "crmaster_auth_token";
+
 
 export const authStorage = {
   getToken(): string | null {

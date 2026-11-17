@@ -57,6 +57,8 @@ jobs:
 
       # 1. Build dos Remotes em Paralelo
       - name: Build remotes (frontend-customers e frontend-products)
+        env:
+          VITE_API_GATEWAY_URL: "https://formativa-api-gateway.azurewebsites.net/api"
         run: |
           (npm ci --prefix frontend-customers && npm run build --prefix frontend-customers) &
           PID_CUSTOMERS=$!
@@ -76,9 +78,12 @@ jobs:
 
       # 3. Build do Shell
       - name: Build frontend-shell
+        env:
+          VITE_API_GATEWAY_URL: "https://formativa-api-gateway.azurewebsites.net/api"
         run: |
           npm ci --prefix frontend-shell
           npm run build --prefix frontend-shell
+
 
       # 4. Deploy da pasta pronta (frontend-shell/dist) para o Azure Static Web Apps
       - name: Deploy to Azure Static Web Apps
