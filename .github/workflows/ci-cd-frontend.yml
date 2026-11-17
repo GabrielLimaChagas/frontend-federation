@@ -1,0 +1,93 @@
+name: Frontend MFE CI/CD (Azure Static Web Apps)
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
+      - master
+
+jobs:
+  test_and_lint:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Unit & Architecture Tests
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Root & MFE Dependencies
+        run: |
+          npm ci
+          npm ci --prefix frontend-customers
+          npm ci --prefix frontend-products
+          npm ci --prefix frontend-shell
+
+      - name: Run Architectural Fitness Functions (dependency-cruiser)
+        run: npm run test:arch
+
+      - name: Run Unit Tests (Vitest)
+        run: |
+          npm run test --prefix frontend-customers
+          npm run test --prefix frontend-products
+          npm run test --prefix frontend-shell
+
+  build_and_deploy_job:
+    needs: test_and_lint
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Build and Deploy to Azure
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 1. Build dos Remotes em Paralelo
+      - name: Build remotes (frontend-customers e frontend-products)
+        run: |
+          (npm ci --prefix frontend-customers && npm run build --prefix frontend-customers) &
+          PID_CUSTOMERS=$!
+          (npm ci --prefix frontend-products && npm run build --prefix frontend-products) &
+          PID_PRODUCTS=$!
+          wait $PID_CUSTOMERS || { echo "frontend-customers falhou"; exit 1; }
+          wait $PID_PRODUCTS  || { echo "frontend-products falhou";  exit 1; }
+
+      # 2. Copiar todo o bundle compilado dos remotes para frontend-shell/public
+      - name: Copy Remotes dist into shell public
+        run: |
+          mkdir -p frontend-shell/public/frontend-customers
+          cp -r frontend-customers/dist/* frontend-shell/public/frontend-customers/
+
+          mkdir -p frontend-shell/public/frontend-products
+          cp -r frontend-products/dist/* frontend-shell/public/frontend-products/
+
+      # 3. Build do Shell
+      - name: Build frontend-shell
+        run: |
+          npm ci --prefix frontend-shell
+          npm run build --prefix frontend-shell
+
+      # 4. Deploy da pasta pronta (frontend-shell/dist) para o Azure Static Web Apps
+      - name: Deploy to Azure Static Web Apps
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "frontend-shell/dist"
+          output_location: ""
+          skip_app_build: true
