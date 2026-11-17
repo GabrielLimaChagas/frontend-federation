@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import React from "react";
 import Dashboard from "./Dashboard";
 import { bffService } from "../services/bffService";
+
 
 vi.mock("../services/bffService", () => ({
   bffService: {

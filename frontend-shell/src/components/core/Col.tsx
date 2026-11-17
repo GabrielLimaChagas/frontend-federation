@@ -1,8 +1,9 @@
-interface ColProps {
-  children?: React.ReactNode
-  className?: string
-}
+import type { HTMLAttributes } from "react";
 
-const Col: React.FC<ColProps> = ({ children, className }) => <div className={`flex flex-col ${className}`}>{children}</div>
+const Col: React.FC<HTMLAttributes<HTMLDivElement>> = ({ children, className, ...props }) => (
+  <div {...props} className={`flex flex-col ${className || ""}`}>
+    {children}
+  </div>
+);
 
-export default Col
+export default Col;
