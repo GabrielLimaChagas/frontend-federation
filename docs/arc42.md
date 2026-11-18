@@ -32,7 +32,7 @@ O usuário final interage através do navegador com o **Frontend Shell**, que re
 
 ```mermaid
 flowchart LR
-    User[Operador / Usuário Final] --> Shell[Frontend Shell (Host)]
+    User[Operador / Usuário Final] --> Shell["Frontend Shell (Host)"]
     Shell --> CustomersMFE[Remote Clientes]
     Shell --> ProductsMFE[Remote Produtos]
     Shell --> Gateway[API Gateway & BFF]
@@ -63,7 +63,7 @@ O Shell carrega os módulos remotos via manifestos `remoteEntry.js` em runtime. 
 graph TD
     subgraph Host [frontend-shell]
         RootLayout[RootLayout / Sidebar]
-        DashboardPage[Dashboard (BFF /api/summary)]
+        DashboardPage["Dashboard (BFF /api/summary)"]
         AuthStorage[authStorage / httpClient]
     end
     subgraph RemoteCustomers [frontend-customers]

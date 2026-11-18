@@ -2,8 +2,6 @@
 
 Projeto de Frontend do sistema **CRMaster**, construído sobre a arquitetura de **Microfrontends (MFE)** com **Vite**, **React 19**, **TypeScript**, **Tailwind CSS v4** e **Module Federation**.
 
-Consulte a documentação técnica completa em [docs/arc42.md](file:///c:/Users/Gabriel%20Faculdade/PUCPR/Projects/arquitetura/frontend-federation/docs/arc42.md).
-
 ---
 
 ## 👥 Integrantes do Grupo
@@ -73,14 +71,14 @@ A interface foi projetada para garantir total independência entre times funcion
 ---
 
 ## 🌐 Links de Produção na Azure & Swagger
-* **Frontend em Produção (Azure Static Web Apps):** [https://zealous-pebble-0418eed0f.azurestaticapps.net](https://zealous-pebble-0418eed0f.azurestaticapps.net) *(Atualize com o link definitivo da Azure caso re-implantado)*
-* **API Gateway & BFF:** [https://formativa-api-gateway.azurewebsites.net](https://formativa-api-gateway.azurewebsites.net)
-* **Documentação Swagger/OpenAPI:** [https://formativa-api-gateway.azurewebsites.net/api/docs](https://formativa-api-gateway.azurewebsites.net/api/docs) *(Placeholder)*
+* **Frontend em Produção (Azure Static Web Apps):** [https://zealous-pebble-0418eed0f.5.azurestaticapps.net](https://zealous-pebble-0418eed0f.5.azurestaticapps.net/)
+* **API Gateway & BFF:** [https://formativa-api-gateway.azurewebsites.net](https://formativa-api-gateway.azurewebsites.net/)
+* **Documentação Swagger/OpenAPI:** [https://formativa-api-gateway.azurewebsites.net/api/docs](https://formativa-api-gateway.azurewebsites.net/api/docs)
 
 ---
 
 ## 📹 Vídeo Demonstrativo (YouTube - Não Listado)
-* **Link do Vídeo:** `https://www.youtube.com/watch?v=SEU_LINK_AQUI` *(Inserir link do YouTube não listado)*
+* **Link do Vídeo:** [https://youtu.be/JhIgVuGcaQM](https://youtu.be/JhIgVuGcaQM)
 
 ### Checklist Roteirizado para Gravação:
 1. **Apresentação Inicial:** Todos os integrantes (`Cauã Kammler`, `Gabriel de Lima Chagas` e `Vinicius Soares da Silva`) com câmeras abertas e identificação do projeto.
